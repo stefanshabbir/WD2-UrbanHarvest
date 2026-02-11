@@ -25,6 +25,7 @@ function FilterSidebar({
     onCategoryChange,
     isMobile = false,
     onClose,
+    onLocationChange,
 }: {
     activeCategory: FilterCategory
     onCategoryChange: (cat: FilterCategory) => void
@@ -36,13 +37,7 @@ function FilterSidebar({
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    // alert(`Location Found: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}. \nShowing products near you.`)
-                    // Call parent handler if available, or dispatch event. 
-                    // Ideally props should allow passing this up.
-                    // For now, let's assume we pass a prop or use a context.
-                    // BUT, since we are inside a component, let's look at the props.
-                    // The props don't currently include a location handler.
-                    // We need to modify the component props.
+                    onLocationChange?.(position.coords.latitude, position.coords.longitude)
                 },
                 (error) => {
                     console.error('Geolocation error:', error)
