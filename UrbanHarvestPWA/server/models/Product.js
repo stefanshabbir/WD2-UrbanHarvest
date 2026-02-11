@@ -34,7 +34,18 @@ const productSchema = new mongoose.Schema({
     // Workshop specific fields
     date: String,
     location: String,
-    duration: String
+    duration: String,
+    geometry: {
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates: {
+            type: [Number],
+            index: '2dsphere'
+        }
+    }
 });
 
 export default mongoose.model('Product', productSchema);

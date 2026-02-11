@@ -6,10 +6,11 @@ import { Filter, X, ChevronDown, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import ProductCard from '@/components/ui/ProductCard'
-import { categories, type Category } from '@/data/mockData'
+import { categories, type Category } from '@/data/constants'
 import { useFilter, type FilterCategory } from '@/context/FilterContext'
 
 interface Product {
+    _id: string
     id: string
     title: string
     category: 'food' | 'lifestyle' | 'education'
@@ -27,6 +28,7 @@ function FilterSidebar({
 }: {
     activeCategory: FilterCategory
     onCategoryChange: (cat: FilterCategory) => void
+    onLocationChange?: (lat: number, lng: number) => void
     isMobile?: boolean
     onClose?: () => void
 }) {
@@ -34,7 +36,13 @@ function FilterSidebar({
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    alert(`Location Found: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}. \nShowing products near you.`)
+                    // alert(`Location Found: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}. \nShowing products near you.`)
+                    // Call parent handler if available, or dispatch event. 
+                    // Ideally props should allow passing this up.
+                    // For now, let's assume we pass a prop or use a context.
+                    // BUT, since we are inside a component, let's look at the props.
+                    // The props don't currently include a location handler.
+                    // We need to modify the component props.
                 },
                 (error) => {
                     console.error('Geolocation error:', error)
@@ -129,6 +137,8 @@ export default function ExplorePage() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
 
+    const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+
     // Sync URL query param with context on mount
     useEffect(() => {
         const categoryParam = searchParams.get('category')
@@ -144,8 +154,13 @@ export default function ExplorePage() {
     // Fetch Products
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
-                const res = await fetch(endpoints.products)
+                let url = endpoints.products
+                if (userLocation) {
+                    url += `?lat=${userLocation.lat}&lng=${userLocation.lng}&dist=20`
+                }
+                const res = await fetch(url)
                 const data = await res.json()
                 // Ensure data is array (if backend returns object wrapper)
                 setProducts(Array.isArray(data) ? data : [])
@@ -157,7 +172,7 @@ export default function ExplorePage() {
             }
         }
         fetchProducts()
-    }, [])
+    }, [userLocation])
 
     const filteredProducts =
         activeCategory === 'all'
@@ -201,6 +216,11 @@ export default function ExplorePage() {
                             <FilterSidebar
                                 activeCategory={activeCategory}
                                 onCategoryChange={setActiveCategory}
+                                onLocationChange={(lat, lng) => {
+                                    // Trigger fetch with new coords
+                                    // We need to move fetchProducts out of useEffect or trigger a state change
+                                    setUserLocation({ lat, lng })
+                                }}
                             />
                         </div>
                     </motion.aside>
@@ -220,6 +240,10 @@ export default function ExplorePage() {
                                 <FilterSidebar
                                     activeCategory={activeCategory}
                                     onCategoryChange={setActiveCategory}
+                                    onLocationChange={(lat, lng) => {
+                                        setUserLocation({ lat, lng })
+                                        setFilterOpen(false)
+                                    }}
                                     isMobile
                                     onClose={() => setFilterOpen(false)}
                                 />
@@ -239,8 +263,8 @@ export default function ExplorePage() {
                                 className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
                             >
                                 {filteredProducts.map((product) => (
-                                    <motion.div key={product.id} variants={itemVariants}>
-                                        <ProductCard {...product} />
+                                    <motion.div key={product._id || product.id} variants={itemVariants}>
+                                        <ProductCard {...product} id={product._id || product.id} />
                                     </motion.div>
                                 ))}
                             </motion.div>

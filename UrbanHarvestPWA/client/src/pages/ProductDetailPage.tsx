@@ -2,16 +2,60 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ShoppingCart, Calendar, MapPin, Clock, Cloud, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { products } from '@/data/mockData'
+import { useState, useEffect } from 'react'
+import { endpoints } from '@/lib/api'
+
+// Define Product interface locally or import from shared types
+interface Product {
+    _id: string
+    id?: string // Handle both _id and id
+    title: string
+    description?: string
+    longDescription?: string
+    price: number
+    image: string
+    category: string
+    type?: string
+    date?: string
+    location?: string
+    duration?: string
+}
 
 export default function ProductDetailPage() {
     const { id } = useParams<{ id: string }>()
+    const [product, setProduct] = useState<Product | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
 
-    // Find product from centralized mock data
-    const product = products.find((p) => p.id === id)
-    const isWorkshop = product?.type === 'workshop'
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const res = await fetch(`${endpoints.products}/${id}`)
+                if (!res.ok) {
+                    throw new Error('Product not found')
+                }
+                const data = await res.json()
+                setProduct(data)
+            } catch (err) {
+                console.error(err)
+                setError('Failed to load product')
+            } finally {
+                setLoading(false)
+            }
+        }
 
-    if (!product) {
+        if (id) fetchProduct()
+    }, [id])
+
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-harvest-green"></div>
+            </div>
+        )
+    }
+
+    if (error || !product) {
         return (
             <div className="min-h-screen px-4 py-20 text-center">
                 <h2 className="mb-4 font-heading text-2xl font-bold">Product Not Found</h2>
@@ -21,6 +65,8 @@ export default function ProductDetailPage() {
             </div>
         )
     }
+
+    const isWorkshop = product.type === 'workshop'
 
     return (
         <div className="min-h-screen px-4 py-8">
@@ -67,10 +113,10 @@ export default function ProductDetailPage() {
                         {/* Category Badge */}
                         <div
                             className={`mb-4 inline-flex w-fit items-center gap-2 rounded-lg border-2 border-black px-4 py-2 font-sans text-sm font-bold uppercase tracking-wide text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${product.category === 'food'
-                                    ? 'bg-harvest-green'
-                                    : product.category === 'education'
-                                        ? 'bg-amber-500'
-                                        : 'bg-earth-brown'
+                                ? 'bg-harvest-green'
+                                : product.category === 'education'
+                                    ? 'bg-amber-500'
+                                    : 'bg-earth-brown'
                                 }`}
                         >
                             {product.category === 'food'
@@ -132,7 +178,7 @@ export default function ProductDetailPage() {
                                 className={`w-full border-3 border-black py-6 font-sans text-lg font-bold uppercase tracking-wide shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${isWorkshop ? 'bg-earth-brown hover:bg-earth-brown/90' : 'bg-harvest-green hover:bg-harvest-green/90'
                                     }`}
                             >
-                                <Link to={isWorkshop ? `/book/${product.id}` : `/book/${product.id}`}>
+                                <Link to={isWorkshop ? `/book/${product._id || product.id}` : `/book/${product._id || product.id}`}>
                                     {isWorkshop ? (
                                         <>
                                             <Calendar className="mr-2 h-5 w-5" />

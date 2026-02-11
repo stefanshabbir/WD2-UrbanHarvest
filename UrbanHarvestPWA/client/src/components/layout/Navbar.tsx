@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, Leaf, ShoppingBag, User } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
+
 
 const navLinks = [
     { name: 'Home', path: '/' },
@@ -26,7 +26,7 @@ export default function Navbar() {
             className="sticky top-0 z-50 w-full"
         >
             {/* Glass-morphism + Neo-brutalist border combo */}
-            <nav className="mx-4 mt-4 rounded-xl border-3 border-black bg-white/80 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] backdrop-blur-lg transition-all duration-300 dark:border-white dark:bg-black/80">
+            <nav className="mx-4 mt-4 rounded-xl border-3 border-black bg-white/80 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] backdrop-blur-lg transition-all duration-300">
                 <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
                     {/* Logo */}
                     <Link
@@ -73,7 +73,7 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        <ThemeToggle />
+                        {/* ThemeToggle removed */}
 
                         {/* CTA Button */}
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -148,7 +148,7 @@ export default function Navbar() {
                                             ))}
                                         </AnimatePresence>
                                         <div className="mt-4 flex justify-center">
-                                            <ThemeToggle />
+                                            {/* ThemeToggle removed */}
                                         </div>
                                     </div>
 

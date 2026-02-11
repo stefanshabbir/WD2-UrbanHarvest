@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Calendar, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
 export interface ProductCardProps {
+    _id?: string
     id: string
     title: string
     description?: string
