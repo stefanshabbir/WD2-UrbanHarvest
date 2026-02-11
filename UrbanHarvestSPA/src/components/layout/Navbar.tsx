@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Leaf, ShoppingBag, User } from 'lucide-react'
+import { Menu, Leaf, ShoppingBag, User } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 
 const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Explore', path: '/explore' },
-    { name: 'Login', path: '/admin' },
+
 ]
 
 export default function Navbar() {
@@ -30,7 +30,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link
                         to="/"
-                        className="flex items-center gap-2 transition-transform hover:scale-105"
+                        className="flex items-center gap-2 rounded-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                         aria-label="Urban Harvest Hub Home"
                     >
                         <motion.div
@@ -50,13 +50,13 @@ export default function Navbar() {
                             <Link
                                 key={link.path}
                                 to={link.path}
-                                className="group relative px-4 py-2"
+                                className="group relative rounded-lg px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                                 aria-label={`Navigate to ${link.name}`}
                             >
                                 <motion.span
                                     className={`relative z-10 font-sans text-sm font-semibold uppercase tracking-wide transition-colors ${location.pathname === link.path
-                                            ? 'text-harvest-green'
-                                            : 'text-gray-700 group-hover:text-harvest-green'
+                                        ? 'text-harvest-green'
+                                        : 'text-gray-700 group-hover:text-harvest-green'
                                         }`}
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -128,9 +128,9 @@ export default function Navbar() {
                                                     <Link
                                                         to={link.path}
                                                         onClick={() => setIsOpen(false)}
-                                                        className={`mb-4 flex items-center gap-3 rounded-lg border-2 border-black p-4 font-sans font-bold uppercase tracking-wide transition-all ${location.pathname === link.path
-                                                                ? 'bg-harvest-green text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-                                                                : 'bg-white hover:translate-x-1 hover:bg-gray-100'
+                                                        className={`mb-4 flex items-center gap-3 rounded-lg border-2 border-black p-4 font-sans font-bold uppercase tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${location.pathname === link.path
+                                                            ? 'bg-harvest-green text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                                                            : 'bg-white hover:translate-x-1 hover:bg-gray-100'
                                                             }`}
                                                         aria-label={`Navigate to ${link.name}`}
                                                     >

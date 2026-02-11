@@ -55,6 +55,8 @@ export default function ProductCard({
                     <img
                         src={image}
                         alt={title}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
 
@@ -76,11 +78,11 @@ export default function ProductCard({
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileHover={{ opacity: 1 }}
-                        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
                     >
                         <Link
                             to={`/products/${id}`}
-                            className="flex items-center gap-2 rounded-full border-2 border-white bg-white px-6 py-3 font-sans text-sm font-bold uppercase tracking-wide text-black transition-transform hover:scale-105"
+                            className="flex items-center gap-2 rounded-full border-2 border-white bg-white px-6 py-3 font-sans text-sm font-bold uppercase tracking-wide text-black transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                             aria-label={`View details for ${title}`}
                         >
                             View Details
@@ -127,8 +129,8 @@ export default function ProductCard({
                                 asChild
                                 disabled={!inStock}
                                 className={`border-2 border-black font-sans font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${isWorkshop
-                                        ? 'bg-earth-brown hover:bg-earth-brown/90'
-                                        : 'bg-harvest-green hover:bg-harvest-green/90'
+                                    ? 'bg-earth-brown hover:bg-earth-brown/90'
+                                    : 'bg-harvest-green hover:bg-harvest-green/90'
                                     } ${!inStock ? 'cursor-not-allowed opacity-50' : ''}`}
                                 aria-label={isWorkshop ? `Book ${title}` : `Add ${title} to cart`}
                             >
@@ -150,9 +152,7 @@ export default function ProductCard({
                     </div>
                 </div>
 
-                {/* Decorative corner */}
-                <div className="absolute -bottom-1 -right-1 h-6 w-6 rotate-45 border-t-3 border-black bg-earth-brown-light" />
-            </div>
-        </motion.article>
+            </div >
+        </motion.article >
     )
 }

@@ -83,7 +83,7 @@ export default function Footer() {
                                 <li key={link.name}>
                                     <Link
                                         to={link.path}
-                                        className="group flex items-center gap-2 font-sans text-sm text-white/70 transition-colors hover:text-white"
+                                        className="group flex items-center gap-2 rounded-lg font-sans text-sm text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                                     >
                                         <span className="h-1.5 w-1.5 rounded-full bg-earth-brown-light transition-transform group-hover:scale-150" />
                                         {link.name}
@@ -108,7 +108,7 @@ export default function Footer() {
                                 <li key={link.name}>
                                     <Link
                                         to={link.path}
-                                        className="group flex items-center gap-2 font-sans text-sm text-white/70 transition-colors hover:text-white"
+                                        className="group flex items-center gap-2 rounded-lg font-sans text-sm text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                                     >
                                         <span className="h-1.5 w-1.5 rounded-full bg-earth-brown-light transition-transform group-hover:scale-150" />
                                         {link.name}
@@ -149,7 +149,7 @@ export default function Footer() {
                                     href={social.href}
                                     whileHover={{ scale: 1.1, rotate: 5 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/30 bg-white/10 transition-colors hover:border-white hover:bg-white/20"
+                                    className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/30 bg-white/10 transition-colors hover:border-white hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                                     aria-label={`Follow us on ${social.label}`}
                                 >
                                     <social.icon className="h-5 w-5 text-white" />
@@ -175,7 +175,7 @@ export default function Footer() {
                             <Link
                                 key={link.name}
                                 to={link.path}
-                                className="font-sans text-sm text-white/60 transition-colors hover:text-white"
+                                className="rounded px-1 font-sans text-sm text-white/60 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                             >
                                 {link.name}
                             </Link>

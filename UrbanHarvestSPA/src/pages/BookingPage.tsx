@@ -52,12 +52,51 @@ export default function BookingPage() {
         return Object.keys(newErrors).length === 0
     }
 
+    const checkPhoneWithNumVerify = async (phone: string) => {
+        try {
+            // NOTE: Variable must be prefixed with VITE_ to be exposed to client
+            const apiKey = import.meta.env.VITE_NUMVERIFY_KEY || import.meta.env.VITE_NUMVERIFY_ACCESS_KEY
+
+            if (!apiKey) {
+                console.warn('NumVerify API key missing. Skipping strict validation.')
+                return true
+            }
+
+            // NumVerify doesn't support CORS on free plan usually, so this might need a proxy.
+            // For dev/demo, we'll try direct call. If HTTPS vs HTTP issue, might fail.
+            const response = await fetch(`http://apilayer.net/api/validate?access_key=${apiKey}&number=${phone}&country_code=&format=1`)
+            const data = await response.json()
+
+            if (data.valid === false) {
+                setErrors((prev) => ({ ...prev, phone: 'Invalid phone number (checked via NumVerify)' }))
+                return false
+            } else if (data.valid === true) {
+                return true
+            }
+            // Handle error/unknown response
+            return true
+        } catch (error) {
+            console.error('NumVerify check failed:', error)
+            // Fallback to allowing it if API fails
+            return true
+        }
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!validateForm()) return
 
         setIsSubmitting(true)
+
+        // Verify Phone
+        if (formData.phone) {
+            const isPhoneValid = await checkPhoneWithNumVerify(formData.phone)
+            if (!isPhoneValid) {
+                setIsSubmitting(false)
+                return
+            }
+        }
 
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -179,8 +218,8 @@ export default function BookingPage() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         className={`w-full rounded-lg border-3 bg-white px-4 py-3 font-sans transition-all focus:outline-none focus:ring-2 focus:ring-harvest-green focus:ring-offset-2 ${errors.name
-                                                ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
-                                                : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                                            ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
+                                            : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                                             }`}
                                         placeholder="Enter your full name"
                                         aria-describedby={errors.name ? 'name-error' : undefined}
@@ -208,8 +247,8 @@ export default function BookingPage() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         className={`w-full rounded-lg border-3 bg-white px-4 py-3 font-sans transition-all focus:outline-none focus:ring-2 focus:ring-harvest-green focus:ring-offset-2 ${errors.email
-                                                ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
-                                                : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                                            ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
+                                            : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                                             }`}
                                         placeholder="you@example.com"
                                         aria-describedby={errors.email ? 'email-error' : undefined}
@@ -237,8 +276,8 @@ export default function BookingPage() {
                                         value={formData.phone}
                                         onChange={handleChange}
                                         className={`w-full rounded-lg border-3 bg-white px-4 py-3 font-sans transition-all focus:outline-none focus:ring-2 focus:ring-harvest-green focus:ring-offset-2 ${errors.phone
-                                                ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
-                                                : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                                            ? 'border-red-500 shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]'
+                                            : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                                             }`}
                                         placeholder="+1 (555) 000-0000"
                                         aria-describedby={errors.phone ? 'phone-error' : undefined}

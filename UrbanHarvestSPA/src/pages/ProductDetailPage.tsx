@@ -2,53 +2,25 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ShoppingCart, Calendar, MapPin, Clock, Cloud, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-// Dummy product data (would come from API/context in real app)
-const products: Record<string, {
-    id: string
-    title: string
-    description: string
-    longDescription: string
-    price: number
-    image: string
-    category: string
-    type: 'product' | 'workshop'
-    date?: string
-    location?: string
-    duration?: string
-    inStock: boolean
-}> = {
-    '1': {
-        id: '1',
-        title: 'Organic Vegetable Box',
-        description: 'Weekly delivery of fresh, seasonal organic vegetables from local farms.',
-        longDescription: 'Experience the freshest produce with our weekly Organic Vegetable Box. We partner with over 50 local farms to bring you a curated selection of seasonal vegetables, picked at peak ripeness and delivered within 24 hours of harvest. Each box contains 8-10 different vegetables, enough to feed a family of four for a week. Our farmers follow strict organic practices, using no synthetic pesticides or fertilizers.',
-        price: 35.00,
-        image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=1200',
-        category: 'food',
-        type: 'product',
-        inStock: true,
-    },
-    '2': {
-        id: '2',
-        title: 'Urban Composting Workshop',
-        description: 'Learn how to turn kitchen scraps into garden gold in this hands-on workshop.',
-        longDescription: 'Join us for an immersive 3-hour workshop where you\'ll learn the art and science of composting in urban environments. Perfect for apartment dwellers and homeowners alike, this workshop covers everything from vermicomposting to bokashi fermentation. You\'ll leave with a starter kit and the confidence to reduce your kitchen waste by up to 80%.',
-        price: 25.00,
-        image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200',
-        category: 'education',
-        type: 'workshop',
-        date: 'January 15, 2025',
-        location: 'Urban Harvest Community Center',
-        duration: '3 hours',
-        inStock: true,
-    },
-}
+import { products } from '@/data/mockData'
 
 export default function ProductDetailPage() {
     const { id } = useParams<{ id: string }>()
-    const product = products[id || '1'] || products['1']
-    const isWorkshop = product.type === 'workshop'
+
+    // Find product from centralized mock data
+    const product = products.find((p) => p.id === id)
+    const isWorkshop = product?.type === 'workshop'
+
+    if (!product) {
+        return (
+            <div className="min-h-screen px-4 py-20 text-center">
+                <h2 className="mb-4 font-heading text-2xl font-bold">Product Not Found</h2>
+                <Button asChild className="border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <Link to="/explore">Back to Explore</Link>
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen px-4 py-8">
@@ -139,7 +111,7 @@ export default function ProductDetailPage() {
 
                         {/* Description */}
                         <p className="mb-6 font-sans text-lg leading-relaxed text-gray-600">
-                            {product.longDescription}
+                            {product.longDescription || product.description}
                         </p>
 
                         {/* Price */}

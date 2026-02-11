@@ -1,104 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Filter, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import ProductCard from '@/components/ui/ProductCard'
-
-// Dummy data
-const products = [
-    {
-        id: '1',
-        title: 'Organic Vegetable Box',
-        description: 'Weekly delivery of fresh, seasonal organic vegetables from local farms.',
-        price: 35.00,
-        image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800',
-        category: 'food' as const,
-        type: 'product' as const,
-        inStock: true,
-    },
-    {
-        id: '2',
-        title: 'Urban Composting Workshop',
-        description: 'Learn how to turn kitchen scraps into garden gold in this hands-on workshop.',
-        price: 25.00,
-        image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800',
-        category: 'education' as const,
-        type: 'workshop' as const,
-        date: 'Jan 15, 2025',
-        inStock: true,
-    },
-    {
-        id: '3',
-        title: 'Bamboo Starter Kit',
-        description: 'Complete eco-friendly bathroom essentials made from sustainable bamboo.',
-        price: 42.00,
-        image: 'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=800',
-        category: 'lifestyle' as const,
-        type: 'product' as const,
-        inStock: true,
-    },
-    {
-        id: '4',
-        title: 'Farm-to-Table Fruit Basket',
-        description: 'Handpicked seasonal fruits sourced directly from local orchards.',
-        price: 28.00,
-        image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=800',
-        category: 'food' as const,
-        type: 'product' as const,
-        inStock: true,
-    },
-    {
-        id: '5',
-        title: 'Rooftop Garden Basics',
-        description: 'Transform your rooftop or balcony into a thriving urban garden.',
-        price: 45.00,
-        image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800',
-        category: 'education' as const,
-        type: 'workshop' as const,
-        date: 'Jan 22, 2025',
-        inStock: true,
-    },
-    {
-        id: '6',
-        title: 'Reusable Produce Bags',
-        description: 'Set of 6 mesh bags for zero-waste grocery shopping.',
-        price: 18.00,
-        image: 'https://images.unsplash.com/photo-1591193686104-fddba4d0e4d8?w=800',
-        category: 'lifestyle' as const,
-        type: 'product' as const,
-        inStock: false,
-    },
-]
-
-const categories = [
-    { id: 'all', label: 'All Items' },
-    { id: 'food', label: 'Fresh Produce' },
-    { id: 'lifestyle', label: 'Lifestyle' },
-    { id: 'education', label: 'Workshops' },
-]
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 },
-    },
-}
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-}
+import { products, categories, type Category } from '@/data/mockData'
+import { useFilter, type FilterCategory } from '@/context/FilterContext'
 
 function FilterSidebar({
     activeCategory,
-    setActiveCategory,
+    onCategoryChange,
     isMobile = false,
     onClose,
 }: {
-    activeCategory: string
-    setActiveCategory: (cat: string) => void
+    activeCategory: FilterCategory
+    onCategoryChange: (cat: FilterCategory) => void
     isMobile?: boolean
     onClose?: () => void
 }) {
@@ -130,12 +47,12 @@ function FilterSidebar({
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                            setActiveCategory(cat.id)
+                            onCategoryChange(cat.id as FilterCategory)
                             onClose?.()
                         }}
                         className={`w-full rounded-lg border-2 border-black p-3 text-left font-sans font-semibold transition-all ${activeCategory === cat.id
-                                ? 'bg-harvest-green text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-                                : 'bg-white hover:bg-gray-100'
+                            ? 'bg-harvest-green text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                            : 'bg-white hover:bg-gray-100'
                             }`}
                         aria-label={`Filter by ${cat.label}`}
                         aria-pressed={activeCategory === cat.id}
@@ -148,9 +65,36 @@ function FilterSidebar({
     )
 }
 
+// Container variants for staggered animation
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 },
+    },
+}
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+}
+
 export default function ExplorePage() {
-    const [activeCategory, setActiveCategory] = useState('all')
+    const { activeCategory, setActiveCategory } = useFilter()
     const [filterOpen, setFilterOpen] = useState(false)
+    const [searchParams] = useSearchParams()
+
+    // Sync URL query param with context on mount
+    useEffect(() => {
+        const categoryParam = searchParams.get('category')
+        if (categoryParam) {
+            // Simple validation to check if it's a valid category
+            const isValid = categories.some((c) => c.id === categoryParam)
+            if (isValid) {
+                setActiveCategory(categoryParam as Category)
+            }
+        }
+    }, [searchParams, setActiveCategory])
 
     const filteredProducts =
         activeCategory === 'all'
@@ -185,7 +129,7 @@ export default function ExplorePage() {
                         <div className="sticky top-28 rounded-2xl border-3 border-black bg-white p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                             <FilterSidebar
                                 activeCategory={activeCategory}
-                                setActiveCategory={setActiveCategory}
+                                onCategoryChange={setActiveCategory}
                             />
                         </div>
                     </motion.aside>
@@ -204,7 +148,7 @@ export default function ExplorePage() {
                             <SheetContent side="left" className="w-[300px] border-r-3 border-black p-0">
                                 <FilterSidebar
                                     activeCategory={activeCategory}
-                                    setActiveCategory={setActiveCategory}
+                                    onCategoryChange={setActiveCategory}
                                     isMobile
                                     onClose={() => setFilterOpen(false)}
                                 />

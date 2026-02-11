@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Leaf, Calendar, ShoppingBag, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BentoGrid } from '@/components/ui/BentoGrid'
+import { BentoCard } from '@/components/ui/BentoCard'
 
 // Bento Grid Items
 const bentoItems = [
@@ -12,7 +14,7 @@ const bentoItems = [
         icon: Leaf,
         color: 'bg-harvest-green',
         link: '/explore?category=food',
-        span: 'md:col-span-2 md:row-span-2',
+        span: 'md:col-span-2 md:row-span-1',
     },
     {
         id: 2,
@@ -42,29 +44,6 @@ const bentoItems = [
         span: 'md:col-span-2 md:row-span-1',
     },
 ]
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.15,
-        },
-    },
-}
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            type: 'spring' as const,
-            stiffness: 100,
-            damping: 15,
-        },
-    },
-}
 
 export default function HomePage() {
     return (
@@ -121,56 +100,19 @@ export default function HomePage() {
                     </motion.div>
 
                     {/* Bento Grid */}
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-100px' }}
-                        className="grid gap-4 md:grid-cols-3 md:grid-rows-3 lg:gap-6"
-                    >
+                    <BentoGrid>
                         {bentoItems.map((item) => (
-                            <motion.div
+                            <BentoCard
                                 key={item.id}
-                                variants={itemVariants}
-                                className={`group ${item.span}`}
-                            >
-                                <Link
-                                    to={item.link}
-                                    className="block h-full"
-                                    aria-label={`Explore ${item.title}`}
-                                >
-                                    <motion.div
-                                        whileHover={{ y: -6 }}
-                                        className="relative h-full overflow-hidden rounded-2xl border-3 border-black bg-white p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] md:p-8"
-                                    >
-                                        {/* Icon */}
-                                        <div
-                                            className={`mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl border-2 border-black ${item.color} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]`}
-                                        >
-                                            <item.icon className="h-7 w-7 text-white" />
-                                        </div>
-
-                                        {/* Content */}
-                                        <h2 className="mb-2 font-heading text-xl font-bold text-gray-900 md:text-2xl">
-                                            {item.title}
-                                        </h2>
-                                        <p className="mb-4 font-sans text-gray-600">
-                                            {item.description}
-                                        </p>
-
-                                        {/* Arrow */}
-                                        <div className="flex items-center gap-2 font-sans font-semibold text-harvest-green transition-transform group-hover:translate-x-2">
-                                            Explore
-                                            <ArrowRight className="h-4 w-4" />
-                                        </div>
-
-                                        {/* Decorative corner */}
-                                        <div className="absolute -bottom-2 -right-2 h-8 w-8 rotate-45 border-t-3 border-black bg-earth-brown-light opacity-0 transition-opacity group-hover:opacity-100" />
-                                    </motion.div>
-                                </Link>
-                            </motion.div>
+                                title={item.title}
+                                description={item.description}
+                                icon={item.icon}
+                                link={item.link}
+                                colorClass={item.color}
+                                spanClass={item.span}
+                            />
                         ))}
-                    </motion.div>
+                    </BentoGrid>
 
                     {/* CTA Section */}
                     <motion.div
@@ -183,7 +125,7 @@ export default function HomePage() {
                         <Link to="/explore">
                             <Button
                                 size="lg"
-                                className="border-3 border-black bg-harvest-green px-8 py-6 font-sans text-lg font-bold uppercase tracking-wide shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-harvest-green/90 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                                className="btn-retro"
                             >
                                 Start Exploring
                                 <ArrowRight className="ml-2 h-5 w-5" />
