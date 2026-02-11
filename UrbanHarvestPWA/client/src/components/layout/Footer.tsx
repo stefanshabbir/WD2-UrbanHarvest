@@ -9,6 +9,7 @@ import {
     MapPin,
     Heart,
 } from 'lucide-react'
+import NotificationButton from '@/components/ui/NotificationButton'
 
 const footerLinks = {
     explore: [
@@ -155,6 +156,10 @@ export default function Footer() {
                                     <social.icon className="h-5 w-5 text-white" />
                                 </motion.a>
                             ))}
+                        </div>
+
+                        <div className="mt-6">
+                            <NotificationButton />
                         </div>
                     </motion.div>
                 </div>

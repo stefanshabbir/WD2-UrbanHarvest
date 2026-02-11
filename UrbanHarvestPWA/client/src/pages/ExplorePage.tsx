@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react'
+import { endpoints } from '@/lib/api'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Filter, X, ChevronDown } from 'lucide-react'
+import { Filter, X, ChevronDown, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import ProductCard from '@/components/ui/ProductCard'
 import { categories, type Category } from '@/data/mockData'
 import { useFilter, type FilterCategory } from '@/context/FilterContext'
-import { MapPin } from 'lucide-react'
 
-// Define Product Interface locally or import (Simulated for clear diff)
 interface Product {
     id: string
-    name: string
-    category: string
+    title: string
+    category: 'food' | 'lifestyle' | 'education'
     price: number
     image: string
     description?: string
@@ -38,6 +37,7 @@ function FilterSidebar({
                     alert(`Location Found: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}. \nShowing products near you.`)
                 },
                 (error) => {
+                    console.error('Geolocation error:', error)
                     alert('Unable to retrieve location.')
                 }
             )
@@ -145,7 +145,7 @@ export default function ExplorePage() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/products')
+                const res = await fetch(endpoints.products)
                 const data = await res.json()
                 // Ensure data is array (if backend returns object wrapper)
                 setProducts(Array.isArray(data) ? data : [])
@@ -163,6 +163,14 @@ export default function ExplorePage() {
         activeCategory === 'all'
             ? products
             : products.filter((p) => p.category === activeCategory)
+
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-harvest-green"></div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen px-4 py-8 md:py-12">

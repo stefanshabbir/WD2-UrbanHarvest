@@ -1,5 +1,5 @@
 {
-    "name": "urban-harvest-server",
+    "name": "@urbanharvest/server",
     "version": "1.0.0",
     "description": "Backend API for Urban Harvest Hub",
     "main": "index.js",

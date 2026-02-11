@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { endpoints } from '@/lib/api'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Check, Calendar, User, Mail, Phone, Users } from 'lucide-react'
@@ -100,7 +101,7 @@ export default function BookingPage() {
 
         // Send to Backend API
         try {
-            const response = await fetch('http://localhost:5000/api/bookings', {
+            const response = await fetch(endpoints.bookings, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

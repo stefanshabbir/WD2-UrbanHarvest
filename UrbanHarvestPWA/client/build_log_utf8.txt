@@ -1,0 +1,6 @@
+﻿
+> @urbanharvest/client@0.0.0 build
+> tsc -b && vite build
+
+src/pages/ExplorePage.tsx(39,18): error TS6133: 'error' is declared but its value is never read.
+src/pages/ExplorePage.tsx(129,12): error TS6133: 'loading' is declared but its value is never read.
